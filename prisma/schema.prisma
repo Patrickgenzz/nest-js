@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id        String   @id @default(uuid())
+  title     String
+  category  String
+  year      String
+  author    String
+  image     Bytes    @default(dbgenerated())
+
+  borrower  Member?  @relation("BorrowedBooks", fields: [memberId], references: [id])
+  memberId  String?
+}
+
+model Member {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String
+  name     String
+  salt     String
+  image    Bytes   @default(dbgenerated())
+  
+  borrowedBooks Book[] @relation("BorrowedBooks")
+}
+
+model Admin {
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String
+  name     String
+  image    Bytes   @default(dbgenerated())
+}
+
